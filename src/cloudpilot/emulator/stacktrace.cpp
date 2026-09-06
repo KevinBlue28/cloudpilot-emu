@@ -25,6 +25,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef _WIN32
+    #include <string>
+
+std::string Backtrace(int skip = 1) { return "<backtrace unavailable>"; }
+
+#else
+
 #include <cxxabi.h>    // for __cxa_demangle
 #include <dlfcn.h>     // for dladdr
 #include <execinfo.h>  // for backtrace
@@ -70,3 +77,5 @@ std::string Backtrace(int skip = 1) {
 
     return trace_buf.str();
 }
+
+#endif

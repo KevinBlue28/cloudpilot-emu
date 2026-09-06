@@ -67,20 +67,24 @@
 // #include <sys/socket.h>  // socklen_t
 #include <sys/types.h>
 
-#if defined(NO_TYPE_SOCKLEN_T)
+#ifndef _WIN32
+
+    #if defined(NO_TYPE_SOCKLEN_T)
 typedef int socklen_t;  // not defined in <sys/socket.h> on solaris or FreeBSD
-#endif
+    #endif
 
 typedef int SOCKET;
 
-#define WSAEINVAL EINVAL
-#define INVALID_SOCKET ((SOCKET)(~0))
-#define SOCKET_ERROR (-1)
-#define closesocket close
-#define ioctlsocket ioctl
+    #define WSAEINVAL EINVAL
+    #define INVALID_SOCKET ((SOCKET)(~0))
+    #define SOCKET_ERROR (-1)
+    #define closesocket close
+    #define ioctlsocket ioctl
 
-#ifndef INADDR_LOOPBACK
-    #define INADDR_LOOPBACK 0x7f000001
+    #ifndef INADDR_LOOPBACK
+        #define INADDR_LOOPBACK 0x7f000001
+    #endif
+
 #endif
 
 #endif /* EmUnixCommon_h */

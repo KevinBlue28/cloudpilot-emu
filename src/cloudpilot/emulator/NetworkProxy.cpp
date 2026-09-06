@@ -1,10 +1,12 @@
+#ifdef __linux__
+    #include <arpa/inet.h>
+#elif defined(_WIN32)
+    #include <winsock2.h>
+#endif
+
 #include "NetworkProxy.h"
 
 #include <memory>
-
-#ifdef __linux__
-    #include <arpa/inet.h>
-#endif
 
 #include "EmMemory.h"
 #include "EmSubroutine.h"

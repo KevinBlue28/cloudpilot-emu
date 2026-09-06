@@ -1,5 +1,7 @@
 #include "SoC.h"
 
+#include <cstring>
+
 #include "RAM.h"
 #include "ROM.h"
 #include "audio_queue.h"

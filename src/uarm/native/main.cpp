@@ -368,7 +368,7 @@ namespace {
 
 }  // namespace
 
-int main(int argc, const char** argv) {
+int main(int argc, char** argv) {
     argparse::ArgumentParser program("cp-uarm");
 
     program.add_description("cp-uarm emulates a Palm Tungsten E2");
