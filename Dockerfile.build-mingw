@@ -1,11 +1,10 @@
 FROM debian:trixie AS toolchain
 
 RUN \
-    echo 'force-unsafe-io' > /etc/dpkg/dpkg.cfg.d/force-unsafe-io && \
     apt-get update && \
     apt-get -y install --no-install-recommends \
-        mingw-w64 build-essential autoconf automake libtool patch make \
-        xz-utils curl ca-certificates file && \
+    mingw-w64 build-essential autoconf automake libtool patch make \
+    xz-utils curl ca-certificates file && \
     rm -rf /var/lib/apt/lists/*
 
 FROM toolchain AS deps
