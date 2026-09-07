@@ -4,14 +4,12 @@
     #include <winsock2.h>
 #endif
 
-#include "NetworkProxy.h"
-
 #include <memory>
 
 #include "EmMemory.h"
-#include "EmSubroutine.h"
 #include "Logging.h"
 #include "Marshal.h"
+#include "NetworkProxy.h"
 #include "SuspendContextNetworkConnect.h"
 #include "SuspendContextNetworkRpc.h"
 #include "SuspendManager.h"
