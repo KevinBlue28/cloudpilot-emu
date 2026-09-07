@@ -398,4 +398,6 @@ int main(int argc, char** argv) {
 #endif
 
     run(options);
+
+    return 0;
 }

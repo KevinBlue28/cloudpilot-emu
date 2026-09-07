@@ -454,4 +454,6 @@ int main(int argc, char** argv) {
     logEnable();
 
     if (!run(options)) exit(1);
+
+    return 0;
 }
