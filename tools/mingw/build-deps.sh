@@ -74,7 +74,8 @@ for p in 0001-sigwinch 0002-event-hook 0003-no-winsize 0004-locale; do
     fetch "$MSYS2_RAW/mingw-w64-readline/$p.patch" "$p.patch"
     patch -p1 -i "$p.patch"
 done
-CFLAGS="-O2 -DNEED_EXTERN_PC=1 -D__USE_MINGW_ALARM -D_POSIX" \
+CFLAGS="-O2 -DNEED_EXTERN_PC=1 -D__USE_MINGW_ALARM -D_POSIX -I$PREFIX/include " \
+LDFLAGS="-L$PREFIX/lib" \
     ./configure --host="$TRIPLE" --build="$(./support/config.guess)" --prefix="$PREFIX" \
     --without-curses --enable-static --disable-shared \
     bash_cv_wcwidth_broken=no bash_cv_func_sigsetjmp=missing \
