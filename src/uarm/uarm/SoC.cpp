@@ -151,7 +151,7 @@ bool SoC::SdRemount() {
 
         return false;
     } else {
-        OnSdInsert();
+        OnSdRemount();
     }
 
     return true;
