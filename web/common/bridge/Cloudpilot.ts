@@ -4,6 +4,7 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../node_modules/@types/emscripten/index.d.ts"/>
 import { deviceDimensions } from '@common/helper/deviceProperties';
+import { uarmRamSizeFromMemorySize } from '@common/helper/ramSize';
 import { identifySessionEngine } from '@common/helper/sessionfile';
 import { ScreenSize } from '@common/model/Dimensions';
 import { EngineType } from '@common/model/EngineType';
@@ -103,6 +104,7 @@ export interface PwmUpdate {
 
 export interface SessionImage<T> {
     engine: EngineType;
+    ramSize: number;
     metadata?: T;
     deviceId: DeviceId;
     screenSize: ScreenSize | undefined;
@@ -626,6 +628,7 @@ export class Cloudpilot {
                 case 'uarm':
                     return this.serializeSessionImageUarm(sessionImage.deviceId, {
                         screenSize: sessionImage.screenSize ?? deviceDimensions(sessionImage.deviceId).screenSize,
+                        ramSize: sessionImage.ramSize,
                         rom,
                         romLength: sessionImage.rom.length,
                         nand,
@@ -885,6 +888,7 @@ export class Cloudpilot {
 
             return {
                 engine: 'cloudpilot',
+                ramSize: this.minRamForDevice(deviceId),
                 screenSize: undefined,
                 deviceId,
                 rom,
@@ -927,8 +931,20 @@ export class Cloudpilot {
                 }
             }
 
+            let ramSize = nativeSession.GetRamSize();
+            if (ramSize === 0 && nativeSession.GetMemorySize() > 0) {
+                ramSize = uarmRamSizeFromMemorySize(nativeSession.GetMemorySize());
+            }
+            if (ramSize === 0) {
+                const romInfo = this.getRomInfo(rom);
+                if (romInfo?.engine !== 'uarm') throw new Error('bad ROM');
+
+                ramSize = romInfo.recommendedRamSize;
+            }
+
             return {
                 engine: 'uarm',
+                ramSize,
                 screenSize: screenSizeFromDisplayMode(nativeSession.GetDisplayMode()),
                 deviceId,
                 rom,
@@ -986,6 +1002,7 @@ export class Cloudpilot {
         deviceId: DeviceId,
         {
             screenSize,
+            ramSize,
             rom,
             romLength,
             memory,
@@ -998,6 +1015,7 @@ export class Cloudpilot {
             metadataLength,
         }: {
             screenSize: ScreenSize;
+            ramSize: number;
             rom: VoidPtr;
             romLength: number;
             memory?: VoidPtr;
@@ -1016,6 +1034,7 @@ export class Cloudpilot {
             nativeImage.SetDeviceType(deviceTypeUarmFromDeviceId(deviceId));
             nativeImage.SetDisplayMode(screenSizeToDisplayMode(screenSize));
             nativeImage.SetNor(romLength, rom);
+            nativeImage.SetRamSize(ramSize);
             if (memory) nativeImage.SetMemory(memoryLength ?? 0, memory);
             if (nand) nativeImage.SetNand(nandLength ?? 0, nand);
             if (savestate) nativeImage.SetSavestate(savestateLength ?? 0, savestate);

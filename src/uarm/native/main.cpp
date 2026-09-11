@@ -54,6 +54,10 @@ struct Options {
 namespace {
     constexpr size_t AUDIO_QUEUE_SIZE = 44100 / MAIN_LOOP_FPS * 10;
 
+    uint32_t ramSizeFromMemorySize(uint32_t memorySize) {
+        return 1 << (31 - __builtin_clz(memorySize));
+    }
+
     int windowWidth(DisplayConfiguration& displayConfiguration, Rotation rotation) {
         switch (rotation) {
             case Rotation::landscape_90:
@@ -131,6 +135,8 @@ namespace {
             }
 
             ramSize = sessionFile.GetRamSize();
+            if (ramSize == 0) ramSize = ramSizeFromMemorySize(sessionFile.GetMemorySize());
+
             displayMode = static_cast<DisplayMode>(sessionFile.GetDisplayMode());
             copy(nor, sessionFile.GetNorSize(), sessionFile.GetNor());
             copy(nand, sessionFile.GetNandSize(), sessionFile.GetNand());

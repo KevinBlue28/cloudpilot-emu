@@ -225,6 +225,7 @@ export class SessionService {
             async () => {
                 const sessionImage: Omit<SessionImage<SessionMetadata>, 'version'> = {
                     engine: session.engine,
+                    ramSize: session.ram << 20,
                     deviceId: session.device,
                     screenSize: session.screenSize,
                     metadata: metadataForSession(session),
@@ -255,6 +256,7 @@ export class SessionService {
 
         const sessionImage: Omit<SessionImage<SessionMetadata>, 'version'> = {
             engine: session.engine,
+            ramSize: session.ram << 20,
             deviceId: session.device,
             screenSize: session.screenSize,
             metadata: metadataForSession(session),
@@ -286,7 +288,7 @@ export class SessionService {
             id: -1,
             device: image.deviceId,
             screenSize: image.screenSize,
-            ram: await this.getRamSizeForSession(image),
+            ram: image.ramSize >>> 20,
             rom: '',
             osVersion: image?.metadata?.osVersion,
             wasResetForcefully: false,
@@ -302,14 +304,6 @@ export class SessionService {
         await this.updateSessionsFromStorage();
 
         return savedSession;
-    }
-
-    private async getRamSizeForSession(image: SessionImage<unknown>): Promise<number> {
-        if (image.engine === 'uarm' && image.memory) {
-            return image.memory?.length >= 32 << 20 ? 32 : 16;
-        }
-
-        return (await this.nativeSupportService.ramSizeForDevice(image.deviceId, image.rom)) >>> 20;
     }
 
     readonly _sessions = signal<Array<Session>>([]);
